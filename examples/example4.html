@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Select multiple videos with sorting | YoutubePicker</title>
+
+	<style type="text/css">
+		form{ margin: 20px }
+		h1{ color: #666; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif }
+		input{ padding: 10px; border: 1px solid #CCC; color: #cc181e; outline: none }
+		img{ border: 0 }
+		#my-videos{ width: 50%; padding: 10px 0 }
+		.item{ display: inline-block; margin-right: 20px }
+		.remove{ cursor: pointer; float: right }
+		.move{ cursor: move; background: #000; color: #FFF; padding: 0 4px; float: left }
+	</style>
+
+	<!-- jquery -->
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+	<!-- nanoscroller -->
+	<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery.nanoscroller/0.8.6/css/nanoscroller.min.css">
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.nanoscroller/0.8.6/javascripts/jquery.nanoscroller.min.js"></script>
+
+	<!-- sortable -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+
+	<!-- youtubepicker -->
+	<link rel="stylesheet" type="text/css" href="../jquery.youtubepicker.min.css">
+	<script type="text/javascript" src="../jquery.youtubepicker.min.js"></script>
+	
+</head>
+<body>
+	<form>
+		<h1>Select multiple videos with sorting</h1>	
+		<input type="text" name="video" class="yp" placeholder="Search video">
+		<div id="my-videos"></div>
+	</form>
+
+	<script type="text/javascript">
+		$(function(){
+			$('.yp').youtubepicker()
+				.on('itemSelected', function(ev, data){
+					var item = 	'<div class="item"><span class="move">move</span><span class="remove">&times;</span><br>' + 
+								'<a href="http://www.youtube.com/watch?v='+data.vid+'" target="_blank">' + 
+								'<img src="http://i.ytimg.com/vi/'+data.vid+'/default.jpg"></a>' +
+								'<input type="hidden" name="videos[]" value="'+data.vid+'">' +
+								'</div>';
+					$('#my-videos').append(item)
+						.sortable({handle:'.move'});
+				});
+			$(document).on('click', '.remove', function(){
+				$(this).parent().remove();
+				return false;
+			})
+		});
+	</script>
+
+</body>
+</html>

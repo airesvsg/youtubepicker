@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Search video from Google | YoutubePicker</title>
+
+	<style type="text/css">
+		form{ margin: 20px }
+		h1{ color: #666; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif }
+		input, button{ padding: 10px; border: 1px solid #CCC; color: #cc181e; outline: none }
+	</style>
+
+	<!-- jquery -->
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+	<!-- nanoscroller -->
+	<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery.nanoscroller/0.8.6/css/nanoscroller.min.css">
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.nanoscroller/0.8.6/javascripts/jquery.nanoscroller.min.js"></script>
+
+	<!-- youtubepicker -->
+	<link rel="stylesheet" type="text/css" href="../jquery.youtubepicker.min.css">
+	<script type="text/javascript" src="../jquery.youtubepicker.min.js"></script>
+
+</head>
+<body>
+
+	<form>
+		<h1>Search video from Google</h1>
+		<input type="text" name="video" class="yp" placeholder="Search video">
+		<button>video id</button>
+	</form>
+		
+
+	<script type="text/javascript">
+		$(function(){
+			$('.yp').youtubepicker({channel:'Google'});
+
+			$('button').click(function(){
+				window.alert($('[name=video]').val());
+				return false;
+			});
+		});
+	</script>
+
+</body>
+</html>
