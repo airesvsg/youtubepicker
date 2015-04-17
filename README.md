@@ -1,6 +1,8 @@
-YoutubePicker
+YouTubePicker
 ================
 Search and select videos on YouTube without leaving the page.
+
+![YouTubePicker](http://www.airesgoncalves.com.br/youtubepicker/youtubepicker.jpg)
 
 Dependencies
 ================
