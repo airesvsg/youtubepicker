@@ -16,14 +16,14 @@
 	</style>
 
 	<!-- jquery -->
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
 	<!-- nanoscroller -->
-	<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery.nanoscroller/0.8.6/css/nanoscroller.min.css">
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.nanoscroller/0.8.6/javascripts/jquery.nanoscroller.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/jquery.nanoscroller/0.8.6/css/nanoscroller.min.css">
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery.nanoscroller/0.8.6/javascripts/jquery.nanoscroller.min.js"></script>
 
 	<!-- sortable -->
-	<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 
 	<!-- youtubepicker -->
 	<link rel="stylesheet" type="text/css" href="../jquery.youtubepicker.min.css">
@@ -42,17 +42,18 @@
 			$('.yp').youtubepicker()
 				.on('itemSelected', function(ev, data){
 					var item = 	'<div class="item"><span class="move">move</span><span class="remove">&times;</span><br>' + 
-								'<a href="http://www.youtube.com/watch?v='+data.vid+'" target="_blank">' + 
+								'<a href="http://www.youtube.com/watch?v='+data.vid+'" target="_blank" title="'+data.title+'">' + 
 								'<img src="http://i.ytimg.com/vi/'+data.vid+'/default.jpg"></a>' +
 								'<input type="hidden" name="videos[]" value="'+data.vid+'">' +
 								'</div>';
 					$('#my-videos').append(item)
 						.sortable({handle:'.move'});
 				});
+
 			$(document).on('click', '.remove', function(){
 				$(this).parent().remove();
 				return false;
-			})
+			});
 		});
 	</script>
 
