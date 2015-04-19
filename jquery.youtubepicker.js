@@ -37,7 +37,10 @@
 									'<div class="'+prefix+'-no-records">'+language.labels.noRecords+'</div>' +
 								'</div>' +
 								'<div class="'+prefix+'-preview">' +
-									'<a herf="javascript:;" class="'+prefix+'-btn-close-player">'+language.buttons.close+'</a>' +
+									'<div class="'+prefix+'-actions">' +
+										'<a herf="javascript:;" class="'+prefix+'-preview-select-btn">'+language.buttons.select+'</a>' +
+										'<a herf="javascript:;" class="'+prefix+'-preview-close-btn">'+language.buttons.close+'</a>' +
+									'</div>' +
 									'<div class="'+prefix+'-player"></div>' +
 								'</div>' +
 							'</div>' +
@@ -222,16 +225,22 @@
 					}
 					field.trigger('itemSelected', data);
 					panel.hide();
+					closePreview(panel);
 				});
 				panel.find('.'+settings.prefix+'-preview-btn').on('click', function(){
-					var vid = $(this).closest('.'+settings.prefix+'-item').data('vid');
-					var iframe = template('iframe', {vid:vid});
-					panel.find('.'+settings.prefix+'-preview').addClass('show').show();
+					var item    = $(this).closest('.'+settings.prefix+'-item');
+					var vid     = item.data('vid');
+					var iframe  = template('iframe', {vid:vid});
+					var preview = panel.find('.'+settings.prefix+'-preview');
+					preview.find('.'+settings.prefix+'-preview-select-btn').off().click(function(){
+						item.find('.'+settings.prefix+'-select-btn').click();
+					});
+					preview.addClass('show').show();
 					panel.find('.'+settings.prefix+'-player').html(iframe);
 				});
 			});
 
-			$('.'+settings.prefix+'-btn-close-player').click(function(){
+			$('.'+settings.prefix+'-preview-close-btn').click(function(){
 				closePreview(panel);
 				return false;
 			});
