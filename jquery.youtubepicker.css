@@ -1,6 +1,7 @@
 .youtubepicker {
   position: absolute;
   display: none;
+  z-index: 999;
 }
 .youtubepicker * {
   margin: 0;
@@ -15,11 +16,20 @@
   -moz-box-sizing: content-box;
   box-sizing: content-box;
 }
-.youtubepicker .youtubepicker-title {
+.youtubepicker .youtubepicker-title,
+.youtubepicker .youtubepicker-description {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   display: block;
+  border-bottom: 1px solid #CCC;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+}
+.youtubepicker .youtubepicker-description {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 .youtubepicker .youtubepicker-wrap {
   position: relative;
@@ -122,34 +132,22 @@
 .youtubepicker .nano > .nano-pane {
   width: 8px;
 }
-.youtubepicker-preview {
-  display: none;
-}
-.youtubepicker-preview.show {
-  position: absolute;
+.youtubepicker.loading .youtubepicker-loader{
   display: block;
-  width: 100%;
-  height: 247px;
-  top: 0;
-  left: 0;
-  background: #000;
-}
-.youtubepicker-preview .youtubepicker-actions {
   position: absolute;
-  float: none;
-  z-index: 99;
-  padding: 0;
-  right: 0;
-  bottom: -20px;
-  margin: 0;
-  cursor: pointer;
+  bottom: 0;
+  background: rgba(204, 204, 204, 0.6);
+  color: #666;
+  width: 100%;
+  text-align: center;
+  border-top: 1px solid #CCC;
+  font-size: 11px;
+  padding: 2px 0;
+  text-transform: uppercase;
 }
-.youtubepicker-preview .youtubepicker-actions a {
-  padding: 5px 10px;
-  margin: 0;
-  margin-left: 1px;
+.youtubepicker.loading .youtubepicker-content{
+  margin-bottom: 20px;
 }
-.youtubepicker-player {
-  position: relative;
-  height: 100%;
+.youtubepicker-loader{
+  display: none;
 }

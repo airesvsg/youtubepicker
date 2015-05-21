@@ -18,8 +18,8 @@
 	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery.nanoscroller/0.8.6/javascripts/jquery.nanoscroller.min.js"></script>
 
 	<!-- youtubepicker -->
-	<link rel="stylesheet" type="text/css" href="../jquery.youtubepicker.min.css">
-	<script type="text/javascript" src="../jquery.youtubepicker.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../jquery.youtubepicker.css">
+	<script type="text/javascript" src="../jquery.youtubepicker.js"></script>
 
 </head>
 <body>
@@ -30,10 +30,15 @@
 		<button>video id</button>
 	</form>
 		
-
 	<script type="text/javascript">
 		$(function(){
-			$('.yp').youtubepicker();
+			// how to obtain the api key
+			// https://developers.google.com/youtube/v3/getting-started
+			var credentials = { 
+				'API_KEY' : 'my-api-key'
+			};
+
+			$('.yp').youtubepicker(credentials);
 
 			$('button').click(function(){
 				window.alert($('[name=video]').val());

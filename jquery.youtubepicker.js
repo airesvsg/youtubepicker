@@ -1,251 +1,284 @@
 ;(function($){
 	
+	var endpoint = 'https://www.googleapis.com/youtube/v3/';
+	
 	var defaults = {
-		'prefix' : 'youtubepicker',
-		'minChar' : 3,
-		'searchDelay' : 1000,
-		'channel' : '',
-		'preview' : true,
-		'itemsPerPage' : 50,
-		'offset' : {'x':0, 'y':0},
-		'nanoScroller' : {'preventPageScrolling' : true},
-		'cloneField' : true,
-		'language' : {
+		'prefix' 				: 'youtubepicker',
+		'minChar' 				: 3,
+		'searchDelay' 			: 2,
+		'preview' 				: true,
+		'cloneField'			: true,
+		'offset' 				: {'x':0, 'y':0},
+		'nanoScroller' 			: {'preventPageScrolling' : true},
+		'language' 	: {
 			'buttons' : {
-				'preview' : 'Preview',
-				'select' : 'Select',
-				'close' : '&times;' 
+				'preview' 		: 'Preview',
+				'select' 		: 'Select',
+				'close' 		: '&times;' 
 			},
 			'labels' : {
-				'views' : 'Views',
-				'noRecords' : 'No records'
+				'views' 		: 'Views',
+				'noRecords' 	: 'No records',
+				'loading' 		: 'Loading...'
 			}
 		}
 	};
 
-	function template(type, data){
-		var html     = '';
-		var prefix   = data.prefix;
-		var language = data.language;
-		switch(type){
-			case 'panel':
-			 	html = 	'<div id="'+prefix+'-'+data.id+'" class="'+prefix+'">' +
-							'<div class="'+prefix+'-wrap">' +
-								'<div class="'+prefix+'-results nano">' +
-									'<div class="'+prefix+'-content nano-content">' +
-									'</div>' +
-									'<div class="'+prefix+'-no-records">'+language.labels.noRecords+'</div>' +
-								'</div>' +
-								'<div class="'+prefix+'-preview">' +
-									'<div class="'+prefix+'-actions">' +
-										'<a herf="javascript:;" class="'+prefix+'-preview-select-btn">'+language.buttons.select+'</a>' +
-										'<a herf="javascript:;" class="'+prefix+'-preview-close-btn">'+language.buttons.close+'</a>' +
-									'</div>' +
-									'<div class="'+prefix+'-player"></div>' +
-								'</div>' +
-							'</div>' +
-						'</div>';
-				break;
-			case 'item':
-				html =	'<div class="'+prefix+'-item">' + 
-							'<div class="'+prefix+'-thumbnail">' +
-								'<p class="'+prefix+'-duration">'+data.duration.hours+':'+data.duration.minutes+':'+data.duration.minutes+'</p>' +
-								'<img src="http://i.ytimg.com/vi/'+data.vid+'/default.jpg"/>' +
-							'</div>' +
-							'<div class="'+prefix+'-info">' +
-								'<p class="'+prefix+'-title">'+data.title+'</p>' +
-								'<div class="'+prefix+'-rating">' +
-									'<div class="'+prefix+'-likes" style="width:'+data.likes+'%"></div>' +
-								'</div>' +
-								'<div class="'+prefix+'-view-count">'+data.views+' <span>'+language.labels.views+'</span></div>' +
-							'</div>' +
-							'<div class="'+prefix+'-actions">' +
-								'<a class="'+prefix+'-preview-btn" href="javascript:;">'+language.buttons.preview+'</a>' +
-								'<a class="'+prefix+'-select-btn" href="javascript:;">'+language.buttons.select+'</a>' +
-							'</div>' +
-						'</div>';
-				break;
-			case 'iframe':
-				html = '<iframe width="100%" height="100%" src="https://www.youtube.com/embed/'+data.vid+'?autoplay=1" frameborder="0" allowfullscreen></iframe>';
-				break;
-		}
-		return html;
-	}
+	var searchParams = {
+		'channelId' 			: '',
+		'channelType' 			: '',
+		'eventType' 			: '',
+		'location' 				: '',
+		'locationRadius' 		: '',
+		'maxResults' 			: 50,
+		'order' 				: 'relevance',
+		'publishedAfter' 		: '',
+		'publishedBefore' 		: '',
+		'regionCode' 			: '',
+		'relatedVideoId' 		: '',
+		'relevanceLanguage' 	: '',
+		'safeSearch' 			: 'none',
+		'topicId' 				: '',
+		'type' 					: 'video',
+		'videoCaption' 			: 'any',
+		'videoCategoryId' 		: '',
+		'videoDefinition' 		: 'any',
+		'videoDimension' 		: 'any',
+		'videoDuration' 		: 'any',
+		'videoEmbeddable' 		: 'any',
+		'videoLicense' 			: 'any',
+		'videoSyndicated' 		: 'any',
+		'videoType' 			: 'any',
+	};
 
-	function secondsToDuration(seconds){
-		seconds = parseInt(seconds, 10);
-		var hours   = Math.floor(seconds / 3600);
-		var dv_min  = seconds % 3600;
-		var minutes = Math.floor(dv_min / 60);
-		seconds = Math.round(dv_min % 60);
-		return {
-			hours   : (hours<10 ? '0' : '') + hours,
-			minutes : (minutes<10 ? '0' : '') + minutes,
-			seconds : (seconds<10 ? '0' : '') + seconds
+	var search = function(credentials, params){
+		var _this = this;
+		var results;
+		var pageToken;
+		var args;
+		var getCredentials = function(key){
+			key = key||'API_KEY';
+			return typeof credentials === 'object' && credentials.hasOwnProperty(key) ? credentials[key] : false;
 		};
-	}
-
-	function search(field, index, max, channel){
-		max   = parseInt(max, 10);
-		index = (max * (parseInt(index, 10)-1)) + 1;
-		var term = field.val();
-		var data = {
-			'q' : term,
-			'v' : 2,
-			'format' : 5,
-			'max-results' : max,
-			'start-index' : index,
-			'alt' : 'jsonc'
+		var getParams = function() {
+			var tmp = { 
+				'key' 		: getCredentials(),
+				'part' 		: 'snippet',
+				'pageToken' : pageToken||'',
+				'q' 		: args && args.hasOwnProperty('query') ? args.query : ''
+			};
+			var p;
+			for(p in searchParams){
+				if(searchParams.hasOwnProperty(p) && params.hasOwnProperty(p) && params[p].toString().length){
+					tmp[p] = params[p];
+				}
+			}
+			return ( params = tmp );
 		};
-		var url = 'http://gdata.youtube.com/feeds/api/' + (channel ? 'users/' + channel + '/uploads' : 'videos');
-		field.trigger('loadInit', {field:field});
-		$.getJSON(url, data, function(data){
-			data = $.extend({}, data, {field:field, hasItems:Boolean(data.data.items)});
-			field.trigger('loadComplete', data);
-		})
-		.fail(function(){
-			field.trigger('loadError', {field:field});
-		});
-	}
-
-	function populate(results){
-		if(!results.field) return;
-		var options = results.field.data('YPFieldData');
-		var panel = $('#'+options.prefix+'-'+options.ypid);
-		var content = panel.find('.'+options.prefix+'-content');
-		var noRecords = panel.find('.'+options.prefix+'-no-records');
-		if(!results.hasItems){
-			noRecords.show();
-		}else{
-			var data = results.data;
-			var i, d;
-			noRecords.hide();
-			for(i in data.items){
-				if(data.items.hasOwnProperty(i)){
-					d = data.items[i];
-					d = {
-							title : d.title,
-							vid : d.id,
-							views : d.viewCount,
-							thumb : d.thumbnail.sqDefault,
-							likes : Math.round((100 * d.likeCount) / d.ratingCount),
-							prefix : options.prefix,
-							language : options.language,
-							duration : secondsToDuration(d.duration)
-						};
-					content.append(template('item', d));
-					$.data(panel.find('.'+options.prefix+'-item:last')[0], 'YPItemData', d);
-				}
-			}
-		}
-		panel.find('.nano').nanoScroller();
-	}
-
-	function closePreview(panel){
-		var prefix  = panel.attr('class');
-		var preview = panel.find('.'+prefix+'-preview');
-		if(preview.hasClass('show')){
-			preview.removeClass('show');
-		}
-		panel.find('.'+prefix+'-player').empty();
-	}
-
-	$.fn.youtubepicker = function(options){
-		var settings = $.extend({}, defaults, $.fn.youtubepicker.options, options);
-		return this.each(function(){
-			var field    = $(this);
-			var id       = new Date().getTime();
-			var index    = 1;
-			var timer    = null;
-			var lastTerm = '';
-			var panel    = template('panel', {id:id, prefix:settings.prefix, language:settings.language});
-
-			if(settings.cloneField){
-				var clone = field.clone(true);
-				field.removeAttr('name');
-				clone.insertAfter(field);
-				clone.hide().removeAttr('class');				
-			}
-
-			$.data(field[0], 'YPFieldData', {ypid:id, prefix:settings.prefix, language:settings.language});
-			
-			$(panel).insertAfter(field);
-			panel = $('#'+settings.prefix+'-'+id);
-
-			if(settings.offset.x){
-				panel.css('margin-left', parseInt(settings.offset.x, 10)+'px');
-			}
-
-			if(settings.offset.y){
-				panel.css('margin-top', parseInt(settings.offset.y, 10)+'px');
-			}
-
-			if($.isFunction(panel.find('.nano').nanoScroller)){
-				panel.find('.nano').nanoScroller(setTimeout.nanoScroller)
-					.on('scrollend', function(){
-						index++;
-						search(field, index, settings.itemsPerPage, settings.channel);
-					});
-			}
-
-			field.on('keyup', function(){
-				var _this = $(this);
-				var term = _this.val();
-				var content = panel.find('.'+settings.prefix+'-content');
-				clearTimeout(timer);
-				if(!term.length){
-					content.empty();
-				}else if(term.length >= settings.minChar && lastTerm !== term){
-					closePreview(panel);
-					timer = setTimeout(function(){
-						lastTerm = term;
-						search(field, index, settings.itemsPerPage, settings.channel);
-						content.empty();
-					}, settings.searchDelay);
-				}
-			})
-			.on('focus', function(){
-				$('.'+settings.prefix).hide();
-				if(!panel.is(':visible')){
-					panel.show();
-				}
-			})
-			.on('blur', function(){
-				if(!panel.is(':hover')){
-					panel.hide();
-				}
-			})
-			.on('loadComplete', function(ev, data){
-				populate(data);
-				panel.find('.'+settings.prefix+'-select-btn').on('click', function(){
-					var data = $(this).closest('.'+settings.prefix+'-item').data('YPItemData');
-					if(settings.cloneField){
-						clone.val(data.vid);
-						data = $.extend({}, data, {clone:clone, field:field, term:lastTerm});
+		this.doSearch = function() {
+			if(arguments.length){
+				args = $.extend({}, {query:'', onLoadInit:false, onLoadComplete:false, onLoadError:false}, arguments[0]);
+				if(args.query.length && getCredentials()){					
+					var _this = this;
+					var url   = endpoint + 'search';
+					results   = false;
+					getParams();
+					if($.isFunction(args.onLoadInit)){
+						args.onLoadInit.call(this, {params:params, url:url});
 					}
-					field.trigger('itemSelected', data);
-					panel.hide();
-					closePreview(panel);
-				});
-				panel.find('.'+settings.prefix+'-preview-btn').on('click', function(){
-					var item    = $(this).closest('.'+settings.prefix+'-item');
-					var vid     = item.data('vid');
-					var iframe  = template('iframe', {vid:vid});
-					var preview = panel.find('.'+settings.prefix+'-preview');
-					preview.find('.'+settings.prefix+'-preview-select-btn').off().click(function(){
-						item.find('.'+settings.prefix+'-select-btn').click();
+					$.getJSON(url, params, function(data){
+						results = data;
+						if($.isFunction(args.onLoadComplete)){
+							args.onLoadComplete.call(_this, data);
+						}
+					})
+					.fail(function(data){
+						if($.isFunction(args.onLoadError)){
+							args.onLoadError.call(_this, data);
+						}
 					});
-					preview.addClass('show').show();
-					panel.find('.'+settings.prefix+'-player').html(iframe);
+				}
+			}
+			return this;
+		};
+		var page = function(direction){
+			if(results && results.hasOwnProperty(direction)){
+				pageToken = results[direction];
+				return _this.doSearch(args);			
+			}
+			return false;
+		};
+		this.nextPage = function(){
+			return page('nextPageToken');
+		};
+		this.prevPage = function(){
+			return page('prevPageToken');
+		};
+		return this;
+	};
+
+	var utils = function(id, settings){
+		var _this     = this;
+		var prefix    = settings.prefix;
+		var language  = settings.language;
+		this.template = function(type, data) {
+			var html     = '';
+			switch(type){
+				case 'panel':
+				 	html = 	'<div id="'+prefix+'-'+id+'" class="'+prefix+' '+prefix+'-panel">' +
+								'<div class="'+prefix+'-wrap">' +
+									'<div class="'+prefix+'-results nano">' +
+										'<div class="'+prefix+'-content nano-content"></div>' +
+										'<div class="'+prefix+'-loader">'+language.labels.loading+'</div>' +
+										'<div class="'+prefix+'-no-records">'+language.labels.noRecords+'</div>' +
+									'</div>' +
+								'</div>' +
+							'</div>';
+					break;
+				case 'item':
+					html =	'<div class="'+prefix+'-item">' + 
+								'<div class="'+prefix+'-thumbnail">' +
+									'<img src="'+data.thumb+'"/>' +
+								'</div>' +
+								'<div class="'+prefix+'-info">' +
+									'<p class="'+prefix+'-title">'+data.title+'</p>' +
+									'<p class="'+prefix+'-description">'+data.description+'</p>' +
+								'</div>' +
+								'<div class="'+prefix+'-actions">' +
+									'<a class="'+prefix+'-select-btn" href="javascript:;">'+language.buttons.select+'</a>' +
+								'</div>' +
+							'</div>';
+					break;
+			}
+			return html;
+		};
+		this.populate = function(results){
+			var panel     = $('#'+settings.prefix+'-'+id);
+			var content   = panel.find('.'+settings.prefix+'-content');
+			var noRecords = panel.find('.'+settings.prefix+'-no-records');
+			if(!results.hasItems){
+				noRecords.show();
+			}else{
+				noRecords.hide();
+				var i;
+				var d;
+				for(i in results.items){
+					if(results.items.hasOwnProperty(i)){
+						d = results.items[i];
+						d = {
+							vid 		: d.id.videoId,
+							title 		: d.snippet.title,
+							description : d.snippet.description,
+							thumb 		: d.snippet.thumbnails.default.url
+						};
+						content.append(_this.template('item', d));
+						$.data(panel.find('.'+prefix+'-item:last')[0], 'YPItemData', d);
+					}
+				}
+			}
+			panel.find('.nano').nanoScroller();
+		};
+		this.select = function(panel, field, clone) {
+			panel.find('.'+prefix+'-select-btn').off().on('click', function(){
+				var data = $(this).closest('.'+prefix+'-item').data('YPItemData');
+				if(settings.cloneField){
+					clone.val(data.vid);
+					data = $.extend({}, data, {clone:clone, term:field.val()});
+				}
+				field.trigger('itemSelected', data);
+				panel.hide();
+			});
+		};
+		return this;
+	};
+	
+	$.fn.youtubepicker = function(credentials, options){
+		var settings = $.extend({}, defaults, options);
+		var _search  = new search(credentials, settings);
+		
+		if(credentials && credentials.hasOwnProperty('API_KEY')){
+			return this.each(function(){
+				var timer    = null;
+				var clone    = null;
+				var field    = $(this);
+				var id       = new Date().getTime();
+				var lastTerm = '';
+				var _utils = new utils(id, settings);
+				
+				if(settings.cloneField){
+					clone = field.clone(true);
+					field.removeAttr('name');
+					clone.insertAfter(field);
+					clone.hide().removeAttr('class').removeAttr('id');
+				}
+
+				var panel = _utils.template('panel');
+				$(panel).insertAfter(field);
+				panel = $('#'+settings.prefix+'-'+id);
+
+				var offset = (field.offset().left - panel.parent().offset().left);
+				if(settings.offset.x){
+					offset += parseInt(settings.offset.x, 10);
+				}
+				panel.css('margin-left', offset);
+
+				offset = 0;
+				if(settings.offset.y){
+					offset += parseInt(_search.offset.y, 10);
+				}
+				panel.css('margin-top', offset);
+
+				if($.isFunction(panel.find('.nano').nanoScroller)){
+					panel.find('.nano')
+						.nanoScroller(setTimeout.nanoScroller)
+							.on('scrollend', function(){
+								_search.nextPage();
+							});
+				}
+				
+				field.on('keyup', function(){
+					var term = $(this).val();
+					var content = panel.find('.'+settings.prefix+'-content');
+					clearTimeout(timer);
+					if(!term.length){
+						content.empty();
+					}else if(term.length >= settings.minChar && lastTerm !== term){
+						timer = setTimeout(function(){
+							lastTerm = term;
+							content.empty();
+							_search.doSearch({
+								query: term, 
+								onLoadInit : function(){
+									panel.addClass('loading');
+									field.trigger('loadInit', {term:term});
+								},
+								onLoadComplete : function(data){
+									data = $.extend({}, data, {hasItems:Boolean(data.items)});
+									_utils.populate(data);
+									field.trigger('loadComplete', data);
+									_utils.select(panel, field, clone);
+									panel.removeClass('loading');
+								}, 
+								onLoadError : function(data){
+									field.trigger('loadError', data);
+								}
+							});
+						}, (parseInt(settings.searchDelay, 10) * 1000));
+					}
+				})
+				.on('focus', function(){
+					$('.'+settings.prefix+'.panel').hide();
+					if(!panel.is(':visible')){
+						panel.show();
+					}
+				})
+				.on('blur', function(){
+					if(!panel.is(':hover')){
+						panel.hide();
+					}
 				});
 			});
-
-			$('.'+settings.prefix+'-preview-close-btn').click(function(){
-				closePreview(panel);
-				return false;
-			});
-
-		});
+		}
 	};
 
 })(jQuery);
