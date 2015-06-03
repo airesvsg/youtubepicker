@@ -122,9 +122,20 @@
 		var prefix    = settings.prefix;
 		var language  = settings.language;
 		this.template = function(type, data) {
-			var html     = '';
+			var html    = '';
+			var preview = '';
 			switch(type){
 				case 'panel':
+					if(settings.preview) {
+						preview = 	'<div class="'+prefix+'-preview">' +
+										'<div class="'+prefix+'-actions">' +
+											'<a herf="javascript:;" class="'+prefix+'-preview-select-btn">'+language.buttons.select+'</a>' +
+											'<a herf="javascript:;" class="'+prefix+'-preview-close-btn">'+language.buttons.close+'</a>' +
+										'</div>' +
+										'<div class="'+prefix+'-player"></div>' +
+									'</div>';
+					}
+				 	
 				 	html = 	'<div id="'+prefix+'-'+id+'" class="'+prefix+' '+prefix+'-panel">' +
 								'<div class="'+prefix+'-wrap">' +
 									'<div class="'+prefix+'-results nano">' +
@@ -132,10 +143,14 @@
 										'<div class="'+prefix+'-loader">'+language.labels.loading+'</div>' +
 										'<div class="'+prefix+'-no-records">'+language.labels.noRecords+'</div>' +
 									'</div>' +
-								'</div>' +
+									preview  +
+									'</div>' +
 							'</div>';
 					break;
 				case 'item':
+					if(settings.preview){
+						preview = '<a class="'+prefix+'-preview-btn" href="javascript:;">'+language.buttons.preview+'</a>';
+					}
 					html =	'<div class="'+prefix+'-item">' + 
 								'<div class="'+prefix+'-thumbnail">' +
 									'<img src="'+data.thumb+'"/>' +
@@ -145,9 +160,15 @@
 									'<p class="'+prefix+'-description">'+data.description+'</p>' +
 								'</div>' +
 								'<div class="'+prefix+'-actions">' +
+									preview +
 									'<a class="'+prefix+'-select-btn" href="javascript:;">'+language.buttons.select+'</a>' +
 								'</div>' +
 							'</div>';
+					break;
+				case 'player':
+					html = '<embed width="100%" height="100%" src="http://youtube.com/v/'+data.vid +
+							'&autoplay=1&showsearch=0&iv_load_policy=3&fs=0&rel=0&loop=0"' +
+							' type="application/x-shockwave-flash"></embed>';
 					break;
 			}
 			return html;
@@ -176,6 +197,7 @@
 					}
 				}
 			}
+			this.preview(panel).click();
 			panel.find('.nano').nanoScroller();
 		};
 		this.select = function(panel, field, clone) {
@@ -188,6 +210,42 @@
 				field.trigger('itemSelected', data);
 				panel.hide();
 			});
+		};
+		this.preview = function(panel){
+			var that = this;
+			var self = that.preview;
+			
+			self.close = function() {
+				var preview = panel.find('.'+prefix+'-preview');
+				if(preview.hasClass('show')){
+					preview.removeClass('show');
+				}
+				panel.find('.'+prefix+'-player').empty();
+				panel.find('.'+prefix+'-preview-btn.current').removeClass('current');
+			};
+			
+			self.click = function() {
+				panel.find('.'+prefix+'-preview-btn').off().on('click', function(){
+					var data = $(this).closest('.'+prefix+'-item').data('YPItemData');
+					var player = panel.find('.'+prefix+'-preview').addClass('show').find('.'+prefix+'-player');
+					player.html(that.template('player', data));
+					panel.find('.'+prefix+'-preview-btn').removeClass('current');
+					$(this).addClass('current');
+				});
+			};
+
+			panel.find('.'+prefix+'-preview-close-btn').click(function(){
+				self.close();
+				return;
+			});
+			
+			panel.find('.'+prefix+'-preview-select-btn').click(function(){
+				panel.find('.'+prefix+'-preview-btn.current').parent().find('.'+prefix+'-select-btn').click();
+				self.close();
+				return;
+			});
+			
+			return self;
 		};
 		return this;
 	};
@@ -239,6 +297,7 @@
 				field.on('keyup', function(){
 					var term = $(this).val();
 					var content = panel.find('.'+settings.prefix+'-content');
+					_utils.preview(panel).close();
 					clearTimeout(timer);
 					if(!term.length){
 						content.empty();
