@@ -3,52 +3,57 @@
 	var endpoint = 'https://www.googleapis.com/youtube/v3/';
 	
 	var defaults = {
-		'prefix' 				: 'youtubepicker',
-		'minChar' 				: 3,
-		'searchDelay' 			: 2,
-		'preview' 				: true,
-		'cloneField'			: true,
-		'offset' 				: {'x':0, 'y':0},
-		'nanoScroller' 			: {'preventPageScrolling' : true},
-		'language' 	: {
-			'buttons' : {
-				'preview' 		: 'Preview',
-				'select' 		: 'Select',
-				'close' 		: '&times;' 
+		'prefix': 'youtubepicker',
+		'minChar': 3,
+		'searchDelay': 2,
+		'preview': true,
+		'cloneField': true,
+		'offset': {
+			'x': 0, 
+			'y': 0
+		},
+		'nanoScroller': {
+			'preventPageScrolling': true
+		},
+		'language': {
+			'buttons': {
+				'preview': 'Preview',
+				'select': 'Select',
+				'close': '&times;' 
 			},
-			'labels' : {
-				'views' 		: 'Views',
-				'noRecords' 	: 'No records',
-				'loading' 		: 'Loading...'
+			'labels': {
+				'views': 'Views',
+				'noRecords': 'No records',
+				'loading': 'Loading...'
 			}
 		}
 	};
 
 	var searchParams = {
-		'channelId' 			: '',
-		'channelType' 			: '',
-		'eventType' 			: '',
-		'location' 				: '',
-		'locationRadius' 		: '',
-		'maxResults' 			: 50,
-		'order' 				: 'relevance',
-		'publishedAfter' 		: '',
-		'publishedBefore' 		: '',
-		'regionCode' 			: '',
-		'relatedVideoId' 		: '',
-		'relevanceLanguage' 	: '',
-		'safeSearch' 			: 'none',
-		'topicId' 				: '',
-		'type' 					: 'video',
-		'videoCaption' 			: 'any',
-		'videoCategoryId' 		: '',
-		'videoDefinition' 		: 'any',
-		'videoDimension' 		: 'any',
-		'videoDuration' 		: 'any',
-		'videoEmbeddable' 		: 'any',
-		'videoLicense' 			: 'any',
-		'videoSyndicated' 		: 'any',
-		'videoType' 			: 'any',
+		'channelId': '',
+		'channelType': '',
+		'eventType': '',
+		'location': '',
+		'locationRadius': '',
+		'maxResults': 50,
+		'order': 'relevance',
+		'publishedAfter': '',
+		'publishedBefore': '',
+		'regionCode': '',
+		'relatedVideoId': '',
+		'relevanceLanguage': '',
+		'safeSearch': 'none',
+		'topicId': '',
+		'type': 'video',
+		'videoCaption': 'any',
+		'videoCategoryId': '',
+		'videoDefinition': 'any',
+		'videoDimension': 'any',
+		'videoDuration': 'any',
+		'videoEmbeddable': 'any',
+		'videoLicense': 'any',
+		'videoSyndicated': 'any',
+		'videoType': 'any',
 	};
 
 	var search = function(credentials, params){
@@ -62,10 +67,10 @@
 		};
 		var getParams = function() {
 			var tmp = { 
-				'key' 		: getCredentials(),
-				'part' 		: 'snippet',
-				'pageToken' : pageToken||'',
-				'q' 		: args && args.hasOwnProperty('query') ? args.query : ''
+				'key': getCredentials(),
+				'part': 'snippet',
+				'pageToken': pageToken||'',
+				'q': args && args.hasOwnProperty('query') ? args.query : ''
 			};
 			var p;
 			for(p in searchParams){

@@ -26,50 +26,66 @@ API_KEY | my-api-key
 
 Options
 ================
-Option 				| Default 
--------				| ---------
-prefix				| youtubepicker,
-minChar 			| 3,
-searchDelay 		| 2,
-preview 			| true,
-cloneField			| true,
-offset 				| {'x':0, 'y':0},
-nanoScroller 		| {'preventPageScrolling':true},
-language 			| {
-buttons 			| { 'preview':'Preview', 'select':'Select', 'close':'`&times;`' },
-labels 				| {'views':'Views', 'noRecords':'No records', 'loading':'Loading...'}
-&nbsp; 				| }
+```JSON
+{
+	"prefix": "youtubepicker",
+	"minChar": 3,
+	"searchDelay": 2,
+	"preview": true,
+	"cloneField": true,
+	"offset": {
+		"x":0, 
+		"y":0
+	},
+	"nanoScroller": {
+		"preventPageScrolling":true
+	},
+	"language": {
+		"buttons": {
+			"preview":"Preview", 
+			"select":"Select", 
+			"close":"&times;"
+		},
+		"labels": {
+			"views":"Views", 
+			"noRecords":"No records", 
+			"loading":"Loading..."
+		}
+	}
+}
+```
 
 Options - Search parameters
 ================
 - [Click to see documentation explaining each parameter](https://developers.google.com/youtube/v3/docs/search/list)
 
-Option 				| Default 
--------				| ---------
-channelId			| &nbsp;
-channelType			| &nbsp;
-eventType			| &nbsp;
-location			| &nbsp;
-locationRadius		| &nbsp;
-maxResults			| 50
-order				| relevance
-publishedAfter		| &nbsp;
-publishedBefore		| &nbsp;
-regionCode			| &nbsp;
-relatedVideoId		| &nbsp;
-relevanceLanguage	| &nbsp;
-safeSearch			| none
-topicId				| &nbsp;
-type				| video
-videoCaption		| any
-videoCategoryId		| &nbsp;
-videoDefinition		| any
-videoDimension		| any
-videoDuration		| any
-videoEmbeddable		| any
-videoLicense		| any
-videoSyndicated		| any
-videoType			| any
+```JSON
+{
+	"channelId": "",
+	"channelType": "",
+	"eventType": "",
+	"location": "",
+	"locationRadius": "",
+	"maxResults": "50",
+	"order": "relevance",
+	"publishedAfter": "",
+	"publishedBefore": "",
+	"regionCode": "",
+	"relatedVideoId": "",	
+	"safeSearch": "none",
+	"topicId": "",
+	"type": "video",
+	"videoCaption": "any",
+	"videoCategoryId": "",
+	"videoDefinition": "any",
+	"videoDimension": "any",
+	"videoDuration": "any",
+	"videoEmbeddable": "any",
+	"videoLicense": "any",
+	"videoSyndicated": "any",
+	"videoType": "any"	
+}
+```
 
 Events
 ================
@@ -80,10 +96,16 @@ loadComplete 	| Fired when you receive the search data.
 loadError 		| Fired if you have a trouble.
 itemSelected 	| Fired when you select some video.
 
-####How to use
+#### How to use
 ```javascript
-var credentials = {'API_KEY' : 'my-api-key'};
-var options = {'maxResults':25};
+var credentials = {
+	"API_KEY": "my-api-key"
+};
+
+var options = {
+	"maxResults": 25
+};
+
 $('.my-field').youtubepicker(credentials, options)
   .on('itemSelected', function(ev, data){
     alert(data.vid + ' : ' + data.title);
