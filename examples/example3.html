@@ -15,34 +15,28 @@
 	</style>
 
 	<!-- jquery -->
-	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script type="text/javascript" src="../node_modules/jquery/dist/jquery.js"></script>
 
 	<!-- nanoscroller -->
-	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/jquery.nanoscroller/0.8.6/css/nanoscroller.min.css">
-	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery.nanoscroller/0.8.6/javascripts/jquery.nanoscroller.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../node_modules/nanoscroller/bin/css/nanoscroller.css">
+	<script type="text/javascript" src="../node_modules/nanoscroller/bin/javascripts/jquery.nanoscroller.js"></script>
 
 	<!-- youtubepicker -->
-	<link rel="stylesheet" type="text/css" href="../jquery.youtubepicker.css">
-	<script type="text/javascript" src="../jquery.youtubepicker.js"></script>
+	<link rel="stylesheet" type="text/css" href="../dist/css/youtubepicker.css">
+	<script type="text/javascript" src="../dist/js/youtubepicker.js"></script>
 
 </head>
 <body>
 	<form>
 		<h1>Select multiple videos</h1>
-		<input type="text" name="video" class="yp" placeholder="Search video">
+		<input type="text" name="video" id="yp" placeholder="Search video">
 		<div id="my-videos"></div>
 	</form>
 		
 
 	<script type="text/javascript">
 		$(function(){
-			// how to obtain the api key
-			// https://developers.google.com/youtube/v3/getting-started
-			var credentials = { 
-				'API_KEY' : 'AIzaSyAuHQVhEmD4m2AXL6TvADwZIxZjNogVRF0'
-			};
-
-			$('.yp').youtubepicker(credentials)
+			$('#yp').youtubepicker()
 				.on('itemSelected', function(ev, data){
 					var item = 	'<div class="item"><div class="remove">&times;</div>' + 
 								'<a href="http://www.youtube.com/watch?v='+data.vid+'" target="_blank" title="'+data.title+'">' + 
@@ -52,9 +46,9 @@
 					$('#my-videos').append(item);
 				});
 				
-			$(document).on('click', '.remove', function(){
+			$(document).on('click', '.remove', function(ev){
+				ev.preventDefault();
 				$(this).parent().remove();
-				return false;
 			});
 		});
 	</script>

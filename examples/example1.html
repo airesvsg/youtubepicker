@@ -8,41 +8,36 @@
 		form{ margin: 20px }
 		h1{ color: #666; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif }
 		input, button{ padding: 10px; border: 1px solid #CCC; color: #cc181e; outline: none }
+		button{ cursor: pointer }
 	</style>
 
 	<!-- jquery -->
-	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script type="text/javascript" src="../node_modules/jquery/dist/jquery.js"></script>
 
 	<!-- nanoscroller -->
-	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/jquery.nanoscroller/0.8.6/css/nanoscroller.min.css">
-	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery.nanoscroller/0.8.6/javascripts/jquery.nanoscroller.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../node_modules/nanoscroller/bin/css/nanoscroller.css">
+	<script type="text/javascript" src="../node_modules/nanoscroller/bin/javascripts/jquery.nanoscroller.js"></script>
 
 	<!-- youtubepicker -->
-	<link rel="stylesheet" type="text/css" href="../jquery.youtubepicker.css">
-	<script type="text/javascript" src="../jquery.youtubepicker.js"></script>
+	<link rel="stylesheet" type="text/css" href="../dist/css/youtubepicker.css">
+	<script type="text/javascript" src="../dist/js/youtubepicker.js"></script>
 
 </head>
 <body>
 
 	<form>
 		<h1>Basic usage</h1>
-		<input type="text" name="video" class="yp" placeholder="Search video">
-		<button>video id</button>
+		<input type="text" name="video" id="yp" placeholder="Search video">
+		<button type="button">video id</button>
 	</form>
 		
 	<script type="text/javascript">
 		$(function(){
-			// how to obtain the api key
-			// https://developers.google.com/youtube/v3/getting-started
-			var credentials = { 
-				'API_KEY' : 'AIzaSyAuHQVhEmD4m2AXL6TvADwZIxZjNogVRF0'
-			};
+			$('#yp').youtubepicker();
 
-			$('.yp').youtubepicker(credentials);
-
-			$('button').click(function(){
-				window.alert($('[name=video]').val());
-				return false;
+			$('button').click(function(ev){
+				ev.preventDefault();
+				alert($('[name=video]').val());
 			});
 		});
 	</script>
