@@ -1,5 +1,5 @@
 /*!
- * youtubepicker.js - v2.0.0 - 2016
+ * youtubepicker.js - v2.0.1 - 2016
  * http://github.com/airesvsg/youtubepicker
  * Copyright (c) 2016 Aires Goncalves;
  * Licensed MIT
@@ -189,7 +189,7 @@
 									'</div>' +
 								'</div>';
 			} else if(type === 'player'){
-				html = '<iframe type="text/html" width="100%" height="100%" src="http://www.youtube.com/embed/' + data.vid + '?autoplay=1&showsearch=0&iv_load_policy=3&fs=0&rel=0&loop=0" frameborder="0"/>';
+				html = '<iframe type="text/html" width="100%" height="100%" src="//www.youtube.com/embed/' + data.vid + '?autoplay=1&showsearch=0&iv_load_policy=3&fs=0&rel=0&loop=0" frameborder="0"/>';
 			}
 
 			return html;
