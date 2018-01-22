@@ -4,7 +4,7 @@
   "description": "Search and select videos on YouTube without leaving the page",
   "main": "./dist/js/youtubepicker.js",
   "dependencies": {
-    "jquery": "^2.2.3",
+    "jquery": "^3.3.1",
     "nanoscroller": "^0.8.7"
   },
   "devDependencies": {
